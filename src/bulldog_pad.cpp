@@ -4,6 +4,7 @@
 #include <QHBoxLayout>
 #include <QTimer>
 #include <QDebug>
+#include <QString>
 
 namespace rviz_bulldog_commander
 {
@@ -11,8 +12,7 @@ namespace rviz_bulldog_commander
 // 构造函数，初始化变量
 BulldogPanel::BulldogPanel( QWidget* parent )
   : rviz::Panel( parent )
-  // , is_detect( false )
-  // , is_execute( false)
+  , state( WAIT )
 {
   tab = new QTabWidget();
   // Tab 1
@@ -63,22 +63,65 @@ BulldogPanel::BulldogPanel( QWidget* parent )
           this, SLOT(button_move_click()));
   connect(button_pick, SIGNAL(clicked()),
           this, SLOT(button_pick_click()));
+
+  // Robot
+  robot = new GraspNode();
+  robot->init();
+  // Variables
+  x = 0;
+  y = 0;
+  z = 0;
 }
 
 void BulldogPanel::button_auto_click(){
   label_display->setText("123");
+  if(state == WAIT)
+  {
+    //robot->main();
+  }
 }
 
 void BulldogPanel::button_detect_click(){
   label_display->setText("456");
+  if(state == WAIT)
+  {
+    QString str;
+    if(robot->detect(x,y,z)==true)
+    {
+      str = QString("x:%1\ny:%2\nz:%3\n").arg(x).arg(y).arg(z);
+      state = DETECTED;
+    }
+    else
+    {
+      str = QString("Detected Failed!");
+      state = WAIT;
+    }
+    label_display->setText(str);
+  }
 }
 
 void BulldogPanel::button_move_click(){
   label_display->setText("789");
+  robot->navigation();
 }
 
 void BulldogPanel::button_pick_click(){
   label_display->setText("jqk");
+  if(state == DETECTED)
+  {
+    QString str;
+    if(robot->execute()==true)
+    {
+      str = QString("Pick Succeed!");
+      state = PICKED;
+    }
+    else
+    {
+      str = QString("Pick Failed!");
+      state = DETECTED;
+    }
+    label_display->setText(str);
+  }
 }
 
 } // end namespace rviz_bulldog_commander
