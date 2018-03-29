@@ -32,9 +32,12 @@ private:
   QPushButton *button_pick;
   QLabel *label_display;
 
-// private slots:
-//   void button_execute_click();
-//
+private Q_SLOTS:
+  void button_auto_click();
+  void button_detect_click();
+  void button_move_click();
+  void button_pick_click();
+
 //   // Variables
 //
 //
