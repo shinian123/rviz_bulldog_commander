@@ -6,13 +6,15 @@
 #include <QDebug>
 #include <QString>
 
+#include <sstream>
+
 namespace rviz_bulldog_commander
 {
 
 // 构造函数，初始化变量
 BulldogPanel::BulldogPanel( QWidget* parent )
   : rviz::Panel( parent )
-  , state( WAIT )
+  , state( STATE_WAIT )
 {
   tab = new QTabWidget();
   // Tab 1
@@ -64,9 +66,9 @@ BulldogPanel::BulldogPanel( QWidget* parent )
   connect(button_pick, SIGNAL(clicked()),
           this, SLOT(button_pick_click()));
 
-  // Robot
-  robot = new GraspNode();
-  robot->init();
+  // ROS
+  chatter_pub = n.advertise<std_msgs::String>("plugin_command", 1);
+
   // Variables
   x = 0;
   y = 0;
@@ -74,53 +76,92 @@ BulldogPanel::BulldogPanel( QWidget* parent )
 }
 
 void BulldogPanel::button_auto_click(){
-  label_display->setText("123");
-  if(state == WAIT)
+  // if(state == STATE_WAIT)
+  // {
+  //   //robot->main();
+  // }
+  if(ros::ok())
   {
-    //robot->main();
+    std_msgs::String msg;
+
+    std::stringstream ss;
+    ss << "AUTO";
+    msg.data = ss.str();
+
+    ROS_INFO("%s", msg.data.c_str());
+    chatter_pub.publish(msg);
   }
 }
 
 void BulldogPanel::button_detect_click(){
-  label_display->setText("456");
-  if(state == WAIT)
+  // if(state == STATE_WAIT)
+  // {
+  //   QString str;
+  //   if(robot->detect(x,y,z)==true)
+  //   {
+  //     str = QString("x:%1\ny:%2\nz:%3\n").arg(x).arg(y).arg(z);
+  //     state = STATE_DETECTED;
+  //   }
+  //   else
+  //   {
+  //     str = QString("Detected Failed!");
+  //     state = WAIT;
+  //   }
+  //   label_display->setText(str);
+  // }
+  if(ros::ok())
   {
-    QString str;
-    if(robot->detect(x,y,z)==true)
-    {
-      str = QString("x:%1\ny:%2\nz:%3\n").arg(x).arg(y).arg(z);
-      state = DETECTED;
-    }
-    else
-    {
-      str = QString("Detected Failed!");
-      state = WAIT;
-    }
-    label_display->setText(str);
+    std_msgs::String msg;
+
+    std::stringstream ss;
+    ss << "DETECT";
+    msg.data = ss.str();
+
+    ROS_INFO("%s", msg.data.c_str());
+    chatter_pub.publish(msg);
   }
 }
 
 void BulldogPanel::button_move_click(){
-  label_display->setText("789");
-  robot->navigation();
+  if(ros::ok())
+  {
+    std_msgs::String msg;
+
+    std::stringstream ss;
+    ss << "NAVIGATION";
+    msg.data = ss.str();
+
+    ROS_INFO("%s", msg.data.c_str());
+    chatter_pub.publish(msg);
+  }
 }
 
 void BulldogPanel::button_pick_click(){
-  label_display->setText("jqk");
-  if(state == DETECTED)
+  // if(state == STATE_DETECTED)
+  // {
+  //   QString str;
+  //   if(robot->execute()==true)
+  //   {
+  //     str = QString("Pick Succeed!");
+  //     state = PICKED;
+  //   }
+  //   else
+  //   {
+  //     str = QString("Pick Failed!");
+  //     state = DETECTED;
+  //   }
+  //   label_display->setText(str);
+  // }
+  if(ros::ok())
   {
-    QString str;
-    if(robot->execute()==true)
-    {
-      str = QString("Pick Succeed!");
-      state = PICKED;
-    }
-    else
-    {
-      str = QString("Pick Failed!");
-      state = DETECTED;
-    }
-    label_display->setText(str);
+    std_msgs::String msg;
+
+    std::stringstream ss;
+    ss << "EXECUTE";
+    msg.data = ss.str();
+
+    ROS_INFO("%s", msg.data.c_str());
+    chatter_pub.publish(msg);
   }
 }
 

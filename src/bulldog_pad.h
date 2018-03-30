@@ -3,10 +3,9 @@
 
 //所需要包含的头文件
 #include <ros/ros.h>
+#include "std_msgs/String.h"
 #include <ros/console.h>
 #include <rviz/panel.h>   //plugin基类的头文件
-
-#include "/home/bulldog/catkin_ws/src/seven_dof_arm_test/src/grasp_demo.h"
 
 #include <QPushButton>
 #include <QLabel>
@@ -14,9 +13,9 @@
 
 namespace rviz_bulldog_commander
 {
-#define WAIT 0
-#define DETECTED 1
-#define PICKED 2
+#define STATE_WAIT 0
+#define STATE_DETECTED 1
+#define STATE_PICKED 2
 
 // 所有的plugin都必须是rviz::Panel的子类
 class BulldogPanel: public rviz::Panel
@@ -26,7 +25,7 @@ Q_OBJECT
 public:
   BulldogPanel( QWidget* parent = 0 );
 
-private:
+protected:
   QTabWidget *tab;
 
   //Tab 1
@@ -40,8 +39,10 @@ private:
 
   // Tab 3
 
-  // Robot
-  GraspNode *robot;
+  // ROS
+  ros::Publisher chatter_pub;
+  ros::NodeHandle n;
+
   // Variables
   double x, y, z;
   int state; //State Machine: 0-WAIT, 1-DETECTED, 2-PICKED
@@ -56,11 +57,3 @@ private Q_SLOTS:
 } // end namespace rviz_bulldog_commander
 
 #endif // BULLDOG_PANEL_H
-
-// void init();
-// bool auto_execute();
-// bool detect(double &x, double &y, double &z, double &rx, double &ry, double &rz, double &rw);
-// bool move();
-// bool pick(double &x, double &y, double &z, double &rx, double &ry, double &rz, double &rw);
-// void reset()
-// void stop()
