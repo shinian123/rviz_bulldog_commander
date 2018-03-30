@@ -4,7 +4,6 @@
 #include <QHBoxLayout>
 #include <QTimer>
 #include <QDebug>
-#include <QString>
 
 #include <sstream>
 
@@ -67,12 +66,18 @@ BulldogPanel::BulldogPanel( QWidget* parent )
           this, SLOT(button_pick_click()));
 
   // ROS
-  chatter_pub = n.advertise<std_msgs::String>("plugin_command", 1);
+  pub = n.advertise<std_msgs::String>("plugin_command", 1);
+  sub = n.subscribe("plugin_return", 1, &BulldogPanel::callback, this);
+}
 
-  // Variables
-  x = 0;
-  y = 0;
-  z = 0;
+void BulldogPanel::callback(const std_msgs::String::ConstPtr& msg){
+    ROS_INFO("%s", msg->data.c_str());
+    std::string rec = msg->data;
+    display = QString::fromStdString(rec);
+    label_display->setText(display);
+    if(rec == "Detect succeed!")  state = STATE_DETECTED;
+    else if(rec == "Navagation succeed");
+    else if(rec == "Execute succeed!")  state = STATE_PICKED;
 }
 
 void BulldogPanel::button_auto_click(){
@@ -89,7 +94,7 @@ void BulldogPanel::button_auto_click(){
     msg.data = ss.str();
 
     ROS_INFO("%s", msg.data.c_str());
-    chatter_pub.publish(msg);
+    pub.publish(msg);
   }
 }
 
@@ -118,7 +123,9 @@ void BulldogPanel::button_detect_click(){
     msg.data = ss.str();
 
     ROS_INFO("%s", msg.data.c_str());
-    chatter_pub.publish(msg);
+    pub.publish(msg);
+
+    ros::spinOnce();
   }
 }
 
@@ -132,7 +139,7 @@ void BulldogPanel::button_move_click(){
     msg.data = ss.str();
 
     ROS_INFO("%s", msg.data.c_str());
-    chatter_pub.publish(msg);
+    pub.publish(msg);
   }
 }
 
@@ -161,7 +168,7 @@ void BulldogPanel::button_pick_click(){
     msg.data = ss.str();
 
     ROS_INFO("%s", msg.data.c_str());
-    chatter_pub.publish(msg);
+    pub.publish(msg);
   }
 }
 

@@ -10,6 +10,9 @@
 #include <QPushButton>
 #include <QLabel>
 #include <QTabWidget>
+#include <QString>
+
+#include <string>
 
 namespace rviz_bulldog_commander
 {
@@ -36,16 +39,19 @@ protected:
   QPushButton *button_move;
   QPushButton *button_pick;
   QLabel *label_display;
+  QString display;
 
   // Tab 3
 
   // ROS
-  ros::Publisher chatter_pub;
   ros::NodeHandle n;
+  ros::Publisher pub;
+  ros::Subscriber sub;
+
+  void callback(const std_msgs::String::ConstPtr& msg);
 
   // Variables
-  double x, y, z;
-  int state; //State Machine: 0-WAIT, 1-DETECTED, 2-PICKED
+  int state; //State Machine: 0-STATE_WAIT, 1-STATE_DETECTED, 2-STATE_PICKED
 
 private Q_SLOTS:
   void button_auto_click();
