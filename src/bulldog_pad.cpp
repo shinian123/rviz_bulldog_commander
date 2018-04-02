@@ -28,12 +28,16 @@ BulldogPanel::BulldogPanel( QWidget* parent )
   // Button
   button_detect = new QPushButton("Detect");
   button_move = new QPushButton("Move");
+  button_plan = new QPushButton("Plan");
   button_pick = new QPushButton("Pick");
+  button_reset = new QPushButton("Reset");
   // Button Layout
   QVBoxLayout* button_layout = new QVBoxLayout;
   button_layout->addWidget(button_detect);
   button_layout->addWidget(button_move);
+  button_layout->addWidget(button_plan);
   button_layout->addWidget(button_pick);
+  button_layout->addWidget(button_reset);
   // Display Label
   label_display = new QLabel();
   // Layout
@@ -60,10 +64,14 @@ BulldogPanel::BulldogPanel( QWidget* parent )
           this, SLOT(button_auto_click()));
   connect(button_detect, SIGNAL(clicked()),
           this, SLOT(button_detect_click()));
+  connect(button_plan, SIGNAL(clicked()),
+          this, SLOT(button_plan_click()));
   connect(button_move, SIGNAL(clicked()),
           this, SLOT(button_move_click()));
   connect(button_pick, SIGNAL(clicked()),
           this, SLOT(button_pick_click()));
+  connect(button_reset, SIGNAL(clicked()),
+          this, SLOT(button_reset_click()));
 
   // ROS
   pub = n.advertise<std_msgs::String>("plugin_command", 1);
@@ -74,6 +82,7 @@ void BulldogPanel::callback(const std_msgs::String::ConstPtr& msg){
     ROS_INFO("%s", msg->data.c_str());
     std::string rec = msg->data;
     display = QString::fromStdString(rec);
+    label_display->clear();
     label_display->setText(display);
     if(rec == "Detect succeed!")  state = STATE_DETECTED;
     else if(rec == "Navagation succeed");
@@ -128,7 +137,19 @@ void BulldogPanel::button_detect_click(){
     ros::spinOnce();
   }
 }
+void BulldogPanel::button_plan_click(){
+  if(ros::ok())
+  {
+    std_msgs::String msg;
 
+    std::stringstream ss;
+    ss << "PLAN";
+    msg.data = ss.str();
+
+    ROS_INFO("%s", msg.data.c_str());
+    pub.publish(msg);
+  }
+}
 void BulldogPanel::button_move_click(){
   if(ros::ok())
   {
@@ -171,7 +192,19 @@ void BulldogPanel::button_pick_click(){
     pub.publish(msg);
   }
 }
+void BulldogPanel::button_reset_click(){
+  if(ros::ok())
+  {
+    std_msgs::String msg;
 
+    std::stringstream ss;
+    ss << "RESET";
+    msg.data = ss.str();
+
+    ROS_INFO("%s", msg.data.c_str());
+    pub.publish(msg);
+  }
+}
 } // end namespace rviz_bulldog_commander
 
 // 声明此类是一个rviz的插件
