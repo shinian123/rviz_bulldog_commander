@@ -40,9 +40,12 @@ protected:
   QPushButton *button_navigation2;
   QPushButton *button_pick;
   QPushButton *button_reset;
-  QPushButton *button_plan;
+  QPushButton *button_pick_plan;
+  QPushButton *button_place_plan;
   QPushButton *button_place;
   QLabel *label_display;
+  QLabel *label_pick;
+  QLabel *label_place;
   QString display;
 
   // Tab 3
@@ -60,11 +63,13 @@ protected:
 private Q_SLOTS:
   void button_auto_click();
   void button_detect_click();
-  void button_move_click();
+  void button_navigation1_click();
+  void button_navigation2_click();
   void button_pick_click();
-  void button_plan_click();
+  void button_pick_plan_click();
   void button_reset_click();
   void button_place_click();
+  void button_place_plan_click();
 };
 
 } // end namespace rviz_bulldog_commander

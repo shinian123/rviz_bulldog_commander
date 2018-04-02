@@ -26,25 +26,38 @@ BulldogPanel::BulldogPanel( QWidget* parent )
   // Tab 2
   QWidget *tab_2 = new QWidget();
   // Button
+  label_pick = new QLabel(QObject::tr("Pick"));
+  label_place = new QLabel(QObject::tr("Place"));
   button_detect = new QPushButton("Detect");
-  button_move = new QPushButton("Move");
-  button_plan = new QPushButton("Plan");
+  button_navigation1 = new QPushButton("Navigation");
+  button_navigation2 = new QPushButton("Navigation");
+  button_pick_plan = new QPushButton("Plan");
+  button_place_plan = new QPushButton("Plan");
   button_pick = new QPushButton("Pick");
+  button_place = new QPushButton("Place");
   button_reset = new QPushButton("Reset");
-  // Button Layout
-  QVBoxLayout* button_layout = new QVBoxLayout;
-  button_layout->addWidget(button_detect);
-  button_layout->addWidget(button_move);
-  button_layout->addWidget(button_plan);
-  button_layout->addWidget(button_pick);
-  button_layout->addWidget(button_reset);
-  // Display Label
+
   label_display = new QLabel();
+
+  // Button Layout
+  //QVBoxLayout* button_layout = new QVBoxLayout;
+  QGridLayout *button_layout = new QGridLayout();
+  button_layout->addWidget(label_pick,0,0,1,1);
+  button_layout->addWidget(button_detect,1,0,1,1);
+  button_layout->addWidget(button_navigation1,2,0,1,1);
+  button_layout->addWidget(button_pick_plan,3,0,1,1);
+  button_layout->addWidget(button_pick,4,0,1,1);
+  button_layout->addWidget(label_place,0,1,1,1);
+  button_layout->addWidget(button_navigation2,1,1,1,1);
+  button_layout->addWidget(button_place_plan,2,1,1,1);
+  button_layout->addWidget(button_place,3,1,1,1);
+  button_layout->addWidget(button_reset,4,1,1,1);
+  button_layout->addWidget(label_display,5,0,1,2);
+
+  // Display Label
+  
   // Layout
-  QHBoxLayout* layout_2 = new QHBoxLayout;
-  layout_2->addLayout(button_layout);
-  layout_2->addWidget(label_display);
-  tab_2 -> setLayout(layout_2);
+  tab_2 -> setLayout(button_layout);
 
   // Tab 3
   QWidget *tab_3 = new QWidget();
@@ -64,12 +77,18 @@ BulldogPanel::BulldogPanel( QWidget* parent )
           this, SLOT(button_auto_click()));
   connect(button_detect, SIGNAL(clicked()),
           this, SLOT(button_detect_click()));
-  connect(button_plan, SIGNAL(clicked()),
-          this, SLOT(button_plan_click()));
-  connect(button_move, SIGNAL(clicked()),
-          this, SLOT(button_move_click()));
+  connect(button_pick_plan, SIGNAL(clicked()),
+          this, SLOT(button_pick_plan_click()));
+  connect(button_navigation1, SIGNAL(clicked()),
+          this, SLOT(button_navigation1_click()));
   connect(button_pick, SIGNAL(clicked()),
           this, SLOT(button_pick_click()));
+  connect(button_place, SIGNAL(clicked()),
+          this, SLOT(button_place_click()));
+  connect(button_place_plan, SIGNAL(clicked()),
+          this, SLOT(button_place_plan_click()));
+  connect(button_navigation2, SIGNAL(clicked()),
+          this, SLOT(button_navigation2_click()));
   connect(button_reset, SIGNAL(clicked()),
           this, SLOT(button_reset_click()));
 
@@ -137,7 +156,7 @@ void BulldogPanel::button_detect_click(){
     ros::spinOnce();
   }
 }
-void BulldogPanel::button_plan_click(){
+void BulldogPanel::button_pick_plan_click(){
   if(ros::ok())
   {
     std_msgs::String msg;
@@ -150,7 +169,7 @@ void BulldogPanel::button_plan_click(){
     pub.publish(msg);
   }
 }
-void BulldogPanel::button_move_click(){
+void BulldogPanel::button_navigation1_click(){
   if(ros::ok())
   {
     std_msgs::String msg;
@@ -205,6 +224,10 @@ void BulldogPanel::button_reset_click(){
     pub.publish(msg);
   }
 }
+void BulldogPanel::button_place_click(){}
+void BulldogPanel::button_place_plan_click(){}
+void BulldogPanel::button_navigation2_click(){}
+
 } // end namespace rviz_bulldog_commander
 
 // 声明此类是一个rviz的插件
