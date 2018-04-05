@@ -26,8 +26,8 @@ BulldogPanel::BulldogPanel( QWidget* parent )
   // Tab 2
   QWidget *tab_2 = new QWidget();
   // Button
-  label_pick = new QLabel(QObject::tr("Pick"));
-  label_place = new QLabel(QObject::tr("Place"));
+  label_pick = new QLabel(QObject::tr("     Pick"));
+  label_place = new QLabel(QObject::tr("    Place"));
   button_detect = new QPushButton("Detect");
   button_navigation1 = new QPushButton("Navigation");
   button_navigation2 = new QPushButton("Navigation");
@@ -48,10 +48,11 @@ BulldogPanel::BulldogPanel( QWidget* parent )
   button_layout->addWidget(button_pick_plan,3,0,1,1);
   button_layout->addWidget(button_pick,4,0,1,1);
   button_layout->addWidget(label_place,0,1,1,1);
-  button_layout->addWidget(button_navigation2,1,1,1,1);
-  button_layout->addWidget(button_place_plan,2,1,1,1);
-  button_layout->addWidget(button_place,3,1,1,1);
-  button_layout->addWidget(button_reset,4,1,1,1);
+  button_layout->addWidget(button_reset,1,1,1,1);
+  button_layout->addWidget(button_navigation2,2,1,1,1);
+  button_layout->addWidget(button_place_plan,3,1,1,1);
+  button_layout->addWidget(button_place,4,1,1,1);
+
   button_layout->addWidget(label_display,5,0,1,2);
 
   // Display Label
