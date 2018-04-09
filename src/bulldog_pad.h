@@ -93,6 +93,7 @@ private Q_SLOTS:
   void button_right_gripper_close_click();
   void button_left_gripper_open_click();
   void button_right_gripper_open_click();
+  void pub_gripper(ros::Publisher *pub, std::string str);
 };
 
 } // end namespace rviz_bulldog_commander
