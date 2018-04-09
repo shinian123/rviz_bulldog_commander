@@ -44,6 +44,11 @@ BulldogPanel::BulldogPanel( QWidget* parent )
   button_place = new QPushButton("Execute");
   button_reset = new QPushButton("Reset");
   button_power = new QPushButton("Power");
+  button_gripper_activate = new QPushButton("Gripper Activate");
+  button_left_gripper_close = new QPushButton("Close Left Gripper");
+  button_right_gripper_close = new QPushButton("Close Right Gripper");
+  button_left_gripper_open = new QPushButton("Open Left Gripper");
+  button_right_gripper_open = new QPushButton("Open Right Gripper");
 
   label_display = new QLabel();
 
@@ -74,7 +79,13 @@ BulldogPanel::BulldogPanel( QWidget* parent )
   
   // Layout
   tab_2 -> setLayout(button_layout);
-
+  
+  QGridLayout *manual_layout = new QGridLayout();
+  manual_layout->addWidget(button_gripper_activate,1,0,1,2);
+  manual_layout->addWidget(button_left_gripper_close,2,0,1,1);
+  manual_layout->addWidget(button_right_gripper_close,2,1,1,1);
+  manual_layout->addWidget(button_left_gripper_open,3,0,1,1);
+  manual_layout->addWidget(button_right_gripper_open,3,1,1,1);
   // Tab 3
   QWidget *tab_3 = new QWidget();
 
@@ -113,12 +124,32 @@ BulldogPanel::BulldogPanel( QWidget* parent )
           this, SLOT(button_reset_click()));
   connect(button_power, SIGNAL(clicked()),
           this, SLOT(button_power_click()));
+  connect(button_gripper_activate, SIGNAL(clicked()),
+          this, SLOT(button_gripper_activate_click()));
+  connect(button_left_gripper_open, SIGNAL(clicked()),
+          this, SLOT(button_left_gripper_open_click()));
+  connect(button_right_gripper_open, SIGNAL(clicked()),
+          this, SLOT(button_right_gripper_open_click()));
+  connect(button_left_gripper_close, SIGNAL(clicked()),
+          this, SLOT(button_left_gripper_close_click()));
+  connect(button_right_gripper_close, SIGNAL(clicked()),
+          this, SLOT(button_right_gripper_close_click()));
 
   // ROS
   pub = n.advertise<std_msgs::String>("plugin_command", 1);
   sub = n.subscribe("plugin_return", 1, &BulldogPanel::callback, this);
+  left_gripper_pub = n.advertise<std_msgs::String>("left_gripper_signal", 1000);
+  right_gripper_pub = n.advertise<std_msgs::String>("right_gripper_signal", 1000);
 }
+void BulldogPanel::pub_gripper(ros::Publisher *pub, std::string str){
 
+  std_msgs::String msg;
+  std::stringstream ss;
+    ss << str;
+    msg.data = ss.str();
+    pub->publish(msg);
+  ROS_INFO("gripper signal has been published!");
+}
 void BulldogPanel::callback(const std_msgs::String::ConstPtr& msg){
     ROS_INFO("%s", msg->data.c_str());
     std::string rec = msg->data;
@@ -346,7 +377,27 @@ void BulldogPanel::button_navigation2_click(){
     pub.publish(msg);
   }
 }
-
+void BulldogPanel::button_gripper_activate_click(){
+  pub_gripper(&left_gripper_pub,"a");
+  pub_gripper(&right_gripper_pub,"a");
+  ros::spinOnce();
+}
+void BulldogPanel::button_left_gripper_open_click(){
+  pub_gripper(&left_gripper_pub,"o");
+  ros::spinOnce();
+}
+void BulldogPanel::button_right_gripper_open_click(){
+  pub_gripper(&right_gripper_pub,"o");
+  ros::spinOnce();
+}
+void BulldogPanel::button_left_gripper_close_click(){
+  pub_gripper(&left_gripper_pub,"K");
+  ros::spinOnce();
+}
+void BulldogPanel::button_right_gripper_close_click(){
+  pub_gripper(&right_gripper_pub,"K");
+  ros::spinOnce();
+}
 } // end namespace rviz_bulldog_commander
 
 // 声明此类是一个rviz的插件

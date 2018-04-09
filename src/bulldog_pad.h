@@ -46,6 +46,11 @@ protected:
   QPushButton *button_place_plan;
   QPushButton *button_place;
   QPushButton *button_power;
+  QPushButton *button_gripper_activate;
+  QPushButton *button_left_gripper_close;
+  QPushButton *button_right_gripper_close;
+  QPushButton *button_left_gripper_open;
+  QPushButton *button_right_gripper_open;
   QLabel *label_display;
   QLabel *label_pick;
   QLabel *label_place;
@@ -61,6 +66,8 @@ protected:
   // ROS
   ros::NodeHandle n;
   ros::Publisher pub;
+  ros::Publisher left_gripper_pub;
+  ros::Publisher right_gripper_pub;
   ros::Subscriber sub;
 
   void callback(const std_msgs::String::ConstPtr& msg);
@@ -81,6 +88,11 @@ private Q_SLOTS:
   void button_place_click();
   void button_place_plan_click();
   void button_power_click();
+  void button_gripper_activate_click();
+  void button_left_gripper_close_click();
+  void button_right_gripper_close_click();
+  void button_left_gripper_open_click();
+  void button_right_gripper_open_click();
 };
 
 } // end namespace rviz_bulldog_commander
