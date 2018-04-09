@@ -26,34 +26,49 @@ BulldogPanel::BulldogPanel( QWidget* parent )
   // Tab 2
   QWidget *tab_2 = new QWidget();
   // Button
-  label_pick = new QLabel(QObject::tr("     Pick"));
-  label_place = new QLabel(QObject::tr("    Place"));
+  label_detect = new QLabel(QObject::tr("Detect"));
+  label_navigation1 = new QLabel(QObject::tr("Navigation1"));
+  label_navigation2 = new QLabel(QObject::tr("Navigation2"));
+  label_arrive = new QLabel(QObject::tr("Arrive"));
+  label_pick = new QLabel(QObject::tr("Pick"));
+  label_place = new QLabel(QObject::tr("Place"));
+  label_reset = new QLabel(QObject::tr("Reset"));
   button_detect = new QPushButton("Detect");
-  button_navigation1 = new QPushButton("Navigation");
-  button_navigation2 = new QPushButton("Navigation");
+  button_navigation1 = new QPushButton("Navigation1");
+  button_navigation2 = new QPushButton("Navigation2");
+  button_arrive_plan = new QPushButton("Plan");
+  button_arrive = new QPushButton("Execute");
   button_pick_plan = new QPushButton("Plan");
   button_place_plan = new QPushButton("Plan");
-  button_pick = new QPushButton("Pick");
-  button_place = new QPushButton("Place");
+  button_pick = new QPushButton("Execute");
+  button_place = new QPushButton("Execute");
   button_reset = new QPushButton("Reset");
+  button_power = new QPushButton("Power");
 
   label_display = new QLabel();
 
   // Button Layout
   //QVBoxLayout* button_layout = new QVBoxLayout;
   QGridLayout *button_layout = new QGridLayout();
-  button_layout->addWidget(label_pick,0,0,1,1);
-  button_layout->addWidget(button_detect,1,0,1,1);
-  button_layout->addWidget(button_navigation1,2,0,1,1);
-  button_layout->addWidget(button_pick_plan,3,0,1,1);
-  button_layout->addWidget(button_pick,4,0,1,1);
-  button_layout->addWidget(label_place,0,1,1,1);
-  button_layout->addWidget(button_reset,1,1,1,1);
-  button_layout->addWidget(button_navigation2,2,1,1,1);
-  button_layout->addWidget(button_place_plan,3,1,1,1);
-  button_layout->addWidget(button_place,4,1,1,1);
-
-  button_layout->addWidget(label_display,5,0,1,2);
+  button_layout->addWidget(label_detect,1,0,1,1);
+  button_layout->addWidget(button_detect,1,1,1,2);
+  button_layout->addWidget(label_navigation1,0,0,1,1);
+  button_layout->addWidget(button_navigation1,0,1,1,2);
+  button_layout->addWidget(label_arrive,2,0,1,1);
+  button_layout->addWidget(button_arrive_plan,2,1,1,1);
+  button_layout->addWidget(button_arrive,2,2,1,1);
+  button_layout->addWidget(label_pick,3,0,1,1);
+  button_layout->addWidget(button_pick_plan,3,1,1,1);
+  button_layout->addWidget(button_pick,3,2,1,1);
+  button_layout->addWidget(label_navigation2,4,0,1,1);
+  button_layout->addWidget(button_navigation2,4,1,1,2);
+  button_layout->addWidget(label_place,5,0,1,1);
+  button_layout->addWidget(button_place_plan,5,1,1,1);
+  button_layout->addWidget(button_place,5,2,1,1);
+  button_layout->addWidget(label_reset,6,0,1,1);
+  button_layout->addWidget(button_reset,6,1,1,1);
+  button_layout->addWidget(button_power,6,2,1,1);
+  button_layout->addWidget(label_display,7,0,1,3);
 
   // Display Label
   
@@ -84,6 +99,10 @@ BulldogPanel::BulldogPanel( QWidget* parent )
           this, SLOT(button_navigation1_click()));
   connect(button_pick, SIGNAL(clicked()),
           this, SLOT(button_pick_click()));
+  connect(button_arrive, SIGNAL(clicked()),
+          this, SLOT(button_arrive_click()));
+  connect(button_arrive_plan, SIGNAL(clicked()),
+          this, SLOT(button_arrive_plan_click()));
   connect(button_place, SIGNAL(clicked()),
           this, SLOT(button_place_click()));
   connect(button_place_plan, SIGNAL(clicked()),
@@ -92,6 +111,8 @@ BulldogPanel::BulldogPanel( QWidget* parent )
           this, SLOT(button_navigation2_click()));
   connect(button_reset, SIGNAL(clicked()),
           this, SLOT(button_reset_click()));
+  connect(button_power, SIGNAL(clicked()),
+          this, SLOT(button_power_click()));
 
   // ROS
   pub = n.advertise<std_msgs::String>("plugin_command", 1);
@@ -145,6 +166,8 @@ void BulldogPanel::button_detect_click(){
   // }
   if(ros::ok())
   {
+    label_display->clear();
+    label_display->setText("Detecting");
     std_msgs::String msg;
 
     std::stringstream ss;
@@ -160,10 +183,12 @@ void BulldogPanel::button_detect_click(){
 void BulldogPanel::button_pick_plan_click(){
   if(ros::ok())
   {
+    label_display->clear();
+    label_display->setText("Pick planning");
     std_msgs::String msg;
 
     std::stringstream ss;
-    ss << "PLAN";
+    ss << "PICKPLAN";
     msg.data = ss.str();
 
     ROS_INFO("%s", msg.data.c_str());
@@ -173,10 +198,12 @@ void BulldogPanel::button_pick_plan_click(){
 void BulldogPanel::button_navigation1_click(){
   if(ros::ok())
   {
+    label_display->clear();
+    label_display->setText("Navigating");
     std_msgs::String msg;
 
     std::stringstream ss;
-    ss << "NAVIGATION";
+    ss << "NAVIGATION1";
     msg.data = ss.str();
 
     ROS_INFO("%s", msg.data.c_str());
@@ -202,10 +229,12 @@ void BulldogPanel::button_pick_click(){
   // }
   if(ros::ok())
   {
+    label_display->clear();
+    label_display->setText("Picking");
     std_msgs::String msg;
 
     std::stringstream ss;
-    ss << "EXECUTE";
+    ss << "PICKEXECUTE";
     msg.data = ss.str();
 
     ROS_INFO("%s", msg.data.c_str());
@@ -215,6 +244,8 @@ void BulldogPanel::button_pick_click(){
 void BulldogPanel::button_reset_click(){
   if(ros::ok())
   {
+    label_display->clear();
+    label_display->setText("Reseting");
     std_msgs::String msg;
 
     std::stringstream ss;
@@ -225,9 +256,96 @@ void BulldogPanel::button_reset_click(){
     pub.publish(msg);
   }
 }
-void BulldogPanel::button_place_click(){}
-void BulldogPanel::button_place_plan_click(){}
-void BulldogPanel::button_navigation2_click(){}
+void BulldogPanel::button_power_click(){
+  if(ros::ok())
+  {
+    label_display->clear();
+    label_display->setText("Powering on");
+    std_msgs::String msg;
+
+    std::stringstream ss;
+    ss << "POWER";
+    msg.data = ss.str();
+
+    ROS_INFO("%s", msg.data.c_str());
+    pub.publish(msg);
+  }
+}
+void BulldogPanel::button_arrive_click(){
+  if(ros::ok())
+  {
+    label_display->clear();
+    label_display->setText("Arriving");
+    std_msgs::String msg;
+
+    std::stringstream ss;
+    ss << "ARRIVEEXECUTE";
+    msg.data = ss.str();
+
+    ROS_INFO("%s", msg.data.c_str());
+    pub.publish(msg);
+  }
+}
+void BulldogPanel::button_arrive_plan_click(){
+  if(ros::ok())
+  {
+    label_display->clear();
+    label_display->setText("Arrive Planning");
+    std_msgs::String msg;
+
+    std::stringstream ss;
+    ss << "ARRIVEPLAN";
+    msg.data = ss.str();
+
+    ROS_INFO("%s", msg.data.c_str());
+    pub.publish(msg);
+  }
+}
+void BulldogPanel::button_place_click(){
+  if(ros::ok())
+  {
+    label_display->clear();
+    label_display->setText("Placing");
+    std_msgs::String msg;
+
+    std::stringstream ss;
+    ss << "PLACEEXECUTE";
+    msg.data = ss.str();
+
+    ROS_INFO("%s", msg.data.c_str());
+    pub.publish(msg);
+  }
+}
+void BulldogPanel::button_place_plan_click(){
+  if(ros::ok())
+  {
+    label_display->clear();
+    label_display->setText("Place planning");
+    std_msgs::String msg;
+
+    std::stringstream ss;
+    ss << "PLACEPLAN";
+    msg.data = ss.str();
+
+    ROS_INFO("%s", msg.data.c_str());
+    pub.publish(msg);
+  }
+}
+void BulldogPanel::button_navigation2_click(){
+  if(ros::ok())
+  {
+    label_display->clear();
+    label_display->setText("Navigating");
+    std_msgs::String msg;
+
+    std::stringstream ss;
+    ss << "NAVIGATION2";
+    msg.data = ss.str();
+
+    ROS_INFO("%s", msg.data.c_str());
+    pub.publish(msg);
+  }
+}
 
 } // end namespace rviz_bulldog_commander
 
