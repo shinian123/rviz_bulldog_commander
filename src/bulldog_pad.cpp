@@ -88,7 +88,7 @@ BulldogPanel::BulldogPanel( QWidget* parent )
   manual_layout->addWidget(button_right_gripper_open,3,1,1,1);
   // Tab 3
   QWidget *tab_3 = new QWidget();
-
+  tab_3->setLayout(manual_layout);
   // Add Tab Pages
   tab->addTab(tab_1, "Auto");
   tab->addTab(tab_2, "Semi-Auto");
