@@ -23,7 +23,7 @@ qt4_wrap_cpp(MOC_FILES
 ## Here we specify the list of source files, including the output of
 ## the previous command which is stored in ``${MOC_FILES}``.
 set(SOURCE_FILES
-  src/bulldog_pad.cpp
+  src/grasp_pad.cpp
   ${MOC_FILES}
 )
 
